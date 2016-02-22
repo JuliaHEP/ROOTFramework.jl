@@ -6,6 +6,18 @@ module ROOTFramework
 
 using Compat
 using Cxx
+import CxxStd
+
+
+export cxx_tmpl_arg_tp
+cxx_tmpl_arg_tp(t) = t <: Cxx.CppValue ? t.parameters[1] : t
+
+export Std_String
+typealias Std_String cxxt"std::string"
+
+export Std_Vector
+typealias Std_Vector{T} cxxt"std::vector<$(cxx_tmpl_arg_tp(T))>"
+
 
 function module__init__()
     incdir = strip(@compat readstring(`root-config --incdir`))
