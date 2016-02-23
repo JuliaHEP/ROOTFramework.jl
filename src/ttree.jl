@@ -69,7 +69,7 @@ type TTreeOutput
         Dict{Symbol, Any}(),
         Dict{Symbol, Any}(),
         Dict{Symbol, Pair{Any, Any}}(),
-        TTreePtr(0)
+        TTreePtr(Ptr{Void}(0))
     )
 end
 
@@ -97,7 +97,7 @@ setindex!(output::TTreeOutput, value::Any, key::Symbol) = begin
 end
 
 
-isopen(output::TTreeOutput) = output.ttree != TTreePtr(0)
+isopen(output::TTreeOutput) = output.ttree != TTreePtr(Ptr{Void}(0))
 
 
 open(output::TTreeOutput, tdir::ATDirectoryInst) = begin
@@ -118,7 +118,7 @@ end
 close(output::TTreeOutput) = begin
     if isopen(output)
         const ttree = output.ttree
-        output.ttree = TTreePtr(0)
+        output.ttree = TTreePtr(Ptr{Void}(0))
     end
 end
 
