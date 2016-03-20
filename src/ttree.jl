@@ -86,10 +86,10 @@ setindex!(output::TTreeOutput, value::Any, key::Symbol) = begin
 
     const proxy = ttree_proxy_value(value)
     if proxy == nothing
-        info("Adding branch $(key) of type $(typeof(value)) to TTreeOutput")
+        # info("Adding branch $(key) of type $(typeof(value)) to TTreeOutput")
         output.direct_values[key] = value
     else
-        info("Adding branch $(key) of type $(typeof(value)) to TTreeOutput via proxy of type $(typeof(proxy))")
+        # info("Adding branch $(key) of type $(typeof(value)) to TTreeOutput via proxy of type $(typeof(proxy))")
         output.proxied_values[key] = Pair{Any, Any}(value, proxy)
     end
 
@@ -102,14 +102,14 @@ isopen(output::TTreeOutput) = output.ttree != TTreePtr(Ptr{Void}(0))
 
 open(output::TTreeOutput, tdir::ATDirectoryInst) = begin
     close(output)
-    info("Creating ttree $(output.name) in $(tdir)")
+    # info("Creating ttree $(output.name) in $(tdir)")
     output.ttree = create_ttree!(tdir, output.name, output.title)
     for (key, value) in output.direct_values
-        info("Creating branch $(string(key)) of type $(typeof(value)) in $(output.ttree)")
+        # info("Creating branch $(string(key)) of type $(typeof(value)) in $(output.ttree)")
         create_branch!(output.ttree, string(key), value)
     end
     for (key, (_, proxy)) in output.proxied_values
-        info("Creating branch $(string(key)) of type $(typeof(proxy)) in $(output.ttree)")
+        # info("Creating branch $(string(key)) of type $(typeof(proxy)) in $(output.ttree)")
         create_branch!(output.ttree, string(key), proxy)
     end
 end
