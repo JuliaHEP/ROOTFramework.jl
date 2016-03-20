@@ -7,7 +7,7 @@ hist = TH1D("hist", "Hist", 100, -20, 20)
 
 dist = Normal(0.0, 5.0)
 @time for i in 1:10000
-    fill!(hist, rand(dist))
+    push!(hist, rand(dist))
 end
 draw(hist)
 

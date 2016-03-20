@@ -2,7 +2,7 @@
 
 using Cxx
 
-import Base: show, display, fill!
+import Base: show, display, push!
 import StatsBase: fit
 
 export getname
@@ -58,8 +58,8 @@ gettitle(obj::ATH1Inst) = bytestring(@cxx obj->GetTitle())
 
 getnbins(hist::ATH1Inst) = @cxx hist->GetNbinsX()
 
-fill!(hist::ATH1Inst, x::Integer) = @cxx hist->Fill(x)
-fill!(hist::ATH1Inst, x::AbstractFloat) = @cxx hist->Fill(x)
+push!(hist::ATH1Inst, x::Integer) = @cxx hist->Fill(x)
+push!(hist::ATH1Inst, x::AbstractFloat) = @cxx hist->Fill(x)
 
 draw(hist::ATH1Inst) = @cxx hist->Draw()
 fit(hist::ATH1Inst, f::AbstractString) = @cxx hist->Fit(pointer(f))
