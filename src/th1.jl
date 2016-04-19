@@ -58,8 +58,10 @@ gettitle(obj::ATH1Inst) = bytestring(@cxx obj->GetTitle())
 
 getnbins(hist::ATH1Inst) = @cxx hist->GetNbinsX()
 
-push!(hist::ATH1Inst, x::Integer) = @cxx hist->Fill(x)
-push!(hist::ATH1Inst, x::AbstractFloat) = @cxx hist->Fill(x)
+push!{T <: Union{Integer, AbstractFloat}}(hist::ATH1Inst, x::T) = @cxx hist->Fill(x)
 
 draw(hist::ATH1Inst) = @cxx hist->Draw()
+draw(hist::ATH1Inst, option) = @cxx hist->Draw(pointer(option))
+
+
 fit(hist::ATH1Inst, f::AbstractString) = @cxx hist->Fit(pointer(f))

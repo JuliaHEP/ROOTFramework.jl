@@ -39,6 +39,9 @@ function module__init__()
     cxxinclude("TH1D.h")
     cxxinclude("TH1F.h")
     cxxinclude("TH1I.h")
+    cxxinclude("TH2D.h")
+    cxxinclude("TH2F.h")
+    cxxinclude("TH2I.h")
     cxxinclude("TString.h")
     cxxinclude("TSystem.h")
     cxxinclude("TTree.h")
@@ -67,6 +70,7 @@ const ATDirectoryInst = Union{TDirectoryInst, TFileInst}
 
 typealias TFitResultPtr cxxt"TFitResultPtr"
 
+
 export TH1I, TH1IPtr, TH1IInst, new_TH1I
 typealias TH1I cxxt"TH1I"
 typealias TH1IPtr pcpp"TH1I"
@@ -86,6 +90,27 @@ export ATH1, ATH1Ptr, ATH1Inst
 ATH1 = Union{TH1I, TH1F, TH1D}
 ATH1Ptr = Union{TH1IPtr, TH1FPtr, TH1DPtr}
 ATH1Inst = Union{ATH1, ATH1Ptr}
+
+
+export TH2I, TH2IPtr, TH2IInst, new_TH2I
+typealias TH2I cxxt"TH2I"
+typealias TH2IPtr pcpp"TH2I"
+const TH2IInst = Union{TH2I, TH2IPtr}
+
+export TH2F, TH2FPtr, TH2FInst, new_TH2F
+typealias TH2F cxxt"TH2F"
+typealias TH2FPtr pcpp"TH2F"
+const TH2FInst = Union{TH2F, TH2FPtr}
+
+export TH2D, TH2DPtr, TH2DInst, new_TH2D
+typealias TH2D cxxt"TH2D"
+typealias TH2DPtr pcpp"TH2D"
+const TH2DInst = Union{TH2D, TH2DPtr}
+
+export ATH2, ATH2Ptr, ATH2Inst
+ATH2 = Union{TH2I, TH2F, TH2D}
+ATH2Ptr = Union{TH2IPtr, TH2FPtr, TH2DPtr}
+ATH2Inst = Union{ATH2, ATH2Ptr}
 
 
 export TString, TStringPtr
