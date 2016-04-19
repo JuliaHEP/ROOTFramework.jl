@@ -58,15 +58,15 @@ typealias TBrowserPtr pcpp"TBrowser"
 export TDirectoryRef, TDirectoryPtr, TDirectoryInst
 typealias TDirectoryRef rcpp"TDirectory"
 typealias TDirectoryPtr pcpp"TDirectory"
-const TDirectoryInst = Union{TDirectoryRef, TDirectoryPtr}
+typealias TDirectoryInst Union{TDirectoryRef, TDirectoryPtr}
 
 export TFile, TFilePtr, TFileInst
 typealias TFile cxxt"TFile"
 typealias TFilePtr pcpp"TFile"
-const TFileInst = Union{TFile, TFilePtr}
+typealias TFileInst Union{TFile, TFilePtr}
 
 export ATDirectoryInst
-const ATDirectoryInst = Union{TDirectoryInst, TFileInst}
+typealias ATDirectoryInst Union{TDirectoryInst, TFileInst}
 
 typealias TFitResultPtr cxxt"TFitResultPtr"
 
@@ -74,43 +74,43 @@ typealias TFitResultPtr cxxt"TFitResultPtr"
 export TH1I, TH1IPtr, TH1IInst, new_TH1I
 typealias TH1I cxxt"TH1I"
 typealias TH1IPtr pcpp"TH1I"
-const TH1IInst = Union{TH1I, TH1IPtr}
+typealias TH1IInst Union{TH1I, TH1IPtr}
 
 export TH1F, TH1FPtr, TH1FInst, new_TH1F
 typealias TH1F cxxt"TH1F"
 typealias TH1FPtr pcpp"TH1F"
-const TH1FInst = Union{TH1F, TH1FPtr}
+typealias TH1FInst Union{TH1F, TH1FPtr}
 
 export TH1D, TH1DPtr, TH1DInst, new_TH1D
 typealias TH1D cxxt"TH1D"
 typealias TH1DPtr pcpp"TH1D"
-const TH1DInst = Union{TH1D, TH1DPtr}
+typealias TH1DInst Union{TH1D, TH1DPtr}
 
 export ATH1, ATH1Ptr, ATH1Inst
-ATH1 = Union{TH1I, TH1F, TH1D}
-ATH1Ptr = Union{TH1IPtr, TH1FPtr, TH1DPtr}
-ATH1Inst = Union{ATH1, ATH1Ptr}
+typealias ATH1 Union{TH1I, TH1F, TH1D}
+typealias ATH1Ptr Union{TH1IPtr, TH1FPtr, TH1DPtr}
+typealias ATH1Inst Union{ATH1, ATH1Ptr}
 
 
 export TH2I, TH2IPtr, TH2IInst, new_TH2I
 typealias TH2I cxxt"TH2I"
 typealias TH2IPtr pcpp"TH2I"
-const TH2IInst = Union{TH2I, TH2IPtr}
+typealias TH2IInst Union{TH2I, TH2IPtr}
 
 export TH2F, TH2FPtr, TH2FInst, new_TH2F
 typealias TH2F cxxt"TH2F"
 typealias TH2FPtr pcpp"TH2F"
-const TH2FInst = Union{TH2F, TH2FPtr}
+typealias TH2FInst Union{TH2F, TH2FPtr}
 
 export TH2D, TH2DPtr, TH2DInst, new_TH2D
 typealias TH2D cxxt"TH2D"
 typealias TH2DPtr pcpp"TH2D"
-const TH2DInst = Union{TH2D, TH2DPtr}
+typealias TH2DInst Union{TH2D, TH2DPtr}
 
 export ATH2, ATH2Ptr, ATH2Inst
-ATH2 = Union{TH2I, TH2F, TH2D}
-ATH2Ptr = Union{TH2IPtr, TH2FPtr, TH2DPtr}
-ATH2Inst = Union{ATH2, ATH2Ptr}
+typealias ATH2 Union{TH2I, TH2F, TH2D}
+typealias ATH2Ptr Union{TH2IPtr, TH2FPtr, TH2DPtr}
+typealias ATH2Inst Union{ATH2, ATH2Ptr}
 
 
 export TString, TStringPtr
@@ -126,7 +126,7 @@ typealias TChain cxxt"TChain"
 typealias TChainPtr pcpp"TChain"
 
 export ATTreeInst
-const ATTreeInst = Union{TTreePtr, TChain}
+typealias ATTreeInst Union{TTreePtr, TChain}
 
 
 import EasyPkg
