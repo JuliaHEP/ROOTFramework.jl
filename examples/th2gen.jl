@@ -3,7 +3,7 @@ import JSON
 
 rootgui()
 
-hist = TH2D("hist", "Hist", 100, -20, 20, 100, -20, 20)
+hist = THxx((-20:0.2:20, -20:0.2:20), "hist", "Hist")
 
 dist = MvNormal([0.0, 0.0], ScalMat(2, 5.0))
 @time for i in 1:10000

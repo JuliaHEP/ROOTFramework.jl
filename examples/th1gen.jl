@@ -3,7 +3,7 @@ import JSON
 
 rootgui()
 
-hist = TH1D("hist", "Hist", 100, -20, 20)
+hist = THxx(-20:0.2:20, "hist", "Hist")
 
 dist = Normal(0.0, 5.0)
 @time for i in 1:10000
@@ -19,6 +19,7 @@ write(tfile, hist)
 close(tfile)
 
 hist_dict = JSON.parse(rootjson(hist))
+
 
 #=
 new_TBrowser();

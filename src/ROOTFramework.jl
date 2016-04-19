@@ -42,6 +42,9 @@ function module__init__()
     cxxinclude("TH2D.h")
     cxxinclude("TH2F.h")
     cxxinclude("TH2I.h")
+    cxxinclude("TH3D.h")
+    cxxinclude("TH3F.h")
+    cxxinclude("TH3I.h")
     cxxinclude("TString.h")
     cxxinclude("TSystem.h")
     cxxinclude("TTree.h")
@@ -71,6 +74,10 @@ typealias ATDirectoryInst Union{TDirectoryInst, TFileInst}
 typealias TFitResultPtr cxxt"TFitResultPtr"
 
 
+export TAxisPtr
+typealias TAxisPtr pcpp"TAxis"
+
+
 export TH1I, TH1IPtr, TH1IInst, new_TH1I
 typealias TH1I cxxt"TH1I"
 typealias TH1IPtr pcpp"TH1I"
@@ -86,10 +93,10 @@ typealias TH1D cxxt"TH1D"
 typealias TH1DPtr pcpp"TH1D"
 typealias TH1DInst Union{TH1D, TH1DPtr}
 
-export ATH1, ATH1Ptr, ATH1Inst
-typealias ATH1 Union{TH1I, TH1F, TH1D}
-typealias ATH1Ptr Union{TH1IPtr, TH1FPtr, TH1DPtr}
-typealias ATH1Inst Union{ATH1, ATH1Ptr}
+export AnyTH1, AnyTH1Ptr, AnyTH1Inst
+typealias AnyTH1 Union{TH1I, TH1F, TH1D}
+typealias AnyTH1Ptr Union{TH1IPtr, TH1FPtr, TH1DPtr}
+typealias AnyTH1Inst Union{AnyTH1, AnyTH1Ptr}
 
 
 export TH2I, TH2IPtr, TH2IInst, new_TH2I
@@ -107,10 +114,38 @@ typealias TH2D cxxt"TH2D"
 typealias TH2DPtr pcpp"TH2D"
 typealias TH2DInst Union{TH2D, TH2DPtr}
 
-export ATH2, ATH2Ptr, ATH2Inst
-typealias ATH2 Union{TH2I, TH2F, TH2D}
-typealias ATH2Ptr Union{TH2IPtr, TH2FPtr, TH2DPtr}
-typealias ATH2Inst Union{ATH2, ATH2Ptr}
+export AnyTH2, AnyTH2Ptr, AnyTH2Inst
+typealias AnyTH2 Union{TH2I, TH2F, TH2D}
+typealias AnyTH2Ptr Union{TH2IPtr, TH2FPtr, TH2DPtr}
+typealias AnyTH2Inst Union{AnyTH2, AnyTH2Ptr}
+
+
+export TH3I, TH3IPtr, TH3IInst, new_TH3I
+typealias TH3I cxxt"TH3I"
+typealias TH3IPtr pcpp"TH3I"
+typealias TH3IInst Union{TH3I, TH3IPtr}
+
+export TH3F, TH3FPtr, TH3FInst, new_TH3F
+typealias TH3F cxxt"TH3F"
+typealias TH3FPtr pcpp"TH3F"
+typealias TH3FInst Union{TH3F, TH3FPtr}
+
+export TH3D, TH3DPtr, TH3DInst, new_TH3D
+typealias TH3D cxxt"TH3D"
+typealias TH3DPtr pcpp"TH3D"
+typealias TH3DInst Union{TH3D, TH3DPtr}
+
+export AnyTH3, AnyTH3Ptr, AnyTH3Inst
+typealias AnyTH3 Union{TH3I, TH3F, TH3D}
+typealias AnyTH3Ptr Union{TH3IPtr, TH3FPtr, TH3DPtr}
+typealias AnyTH3Inst Union{AnyTH3, AnyTH3Ptr}
+
+
+typealias AnyTH Union{AnyTH1, AnyTH2, AnyTH3}
+typealias AnyTHPtr Union{AnyTH1Ptr, AnyTH2Ptr, AnyTH3Ptr}
+typealias AnyTHInst Union{AnyTH1Inst, AnyTH2Inst, AnyTH3Inst}
+
+export THxx, new_THxx
 
 
 export TString, TStringPtr
