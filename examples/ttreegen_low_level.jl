@@ -2,7 +2,7 @@ using ROOTFramework, ROOTFramework.CppStd
 using Distributions
 
 
-tfile = TFile("out.root", "recreate")
+tfile = open(TFile, "out.root", "recreate")
 ttree = create_ttree!(tfile, "data", "Data")
 
 idx = Ref{Int32}(0)

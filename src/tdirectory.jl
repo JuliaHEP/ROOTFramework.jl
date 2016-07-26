@@ -2,7 +2,7 @@
 
 using Cxx
 
-import Base: cd, show, write, close
+import Base: cd, show, write, open, close
 
 export current_tdirectory
 export path
@@ -19,9 +19,7 @@ show(io::IO, x::TDirectoryPtr) =
 
 
 
-TFile() = @cxx TFile()
-
-TFile(fname::AbstractString, mode::AbstractString = "", ftitle::AbstractString = "", compress::Integer = 1) = begin
+open(::Type{TFile}, fname::AbstractString, mode::AbstractString = "", ftitle::AbstractString = "", compress::Integer = 1) = begin
     const prev_dir = current_tdirectory()
     try
         @cxx TFile(pointer(fname), pointer(mode), pointer(ftitle), Int32(compress))

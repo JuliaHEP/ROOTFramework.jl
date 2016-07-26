@@ -6,7 +6,7 @@ import JSON
 rootgui()
 set_default_palette(:viridis)
 
-tfile = TFile("out.root", "recreate")
+tfile = open(TFile, "out.root", "recreate")
 
 canvas = @cxxnew TCanvas(pointer("histplots"), pointer("Histogram Plots"))
 @cxx canvas->Divide(2, 2)
@@ -58,7 +58,6 @@ end
 @cxx canvas->cd(4)
 draw(hist3)
 
-tfile = TFile("out.root", "recreate")
 write(tfile, hist3)
 hist3_dict = JSON.parse(rootjson(hist3))
 
