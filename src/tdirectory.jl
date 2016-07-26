@@ -4,22 +4,8 @@ using Cxx
 
 import Base: cd, show, write, close
 
-export @tmp_tdir_cd
 export current_tdirectory
 export path
-
-
-macro tmp_tdir_cd(dir, body)
-    quote
-        const prev_dir = current_tdirectory()
-        try
-            cd($dir)
-            $body
-        finally
-            cd(prev_dir)
-        end
-    end
-end
 
 
 current_tdirectory() = icxx""" (TDirectory*)TDirectory::CurrentDirectory(); """
@@ -54,8 +40,11 @@ show(io::IO, x::TFilePtr) =
 write(tdir::ATDirectoryInst, obj::Cxx.CppValue, name::AbstractString = "", option::Integer = 0, bufsize::Integer = 0) =
     write(tdir, pointer(obj), name, option, bufsize)
 
-write(tdir::ATDirectoryInst, obj::Cxx.CppPtr, name::AbstractString = "", option::Integer = 0, bufsize::Integer = 0) =
-    @tmp_tdir_cd tdir @cxx obj->Write(isempty(name) ? Ptr{UInt8}(0) : pointer(name), Int32(option), Int32(bufsize))
+write(tdir::ATDirectoryInst, obj::Cxx.CppPtr, name::AbstractString = "", option::Integer = 0, bufsize::Integer = 0) = begin
+    cd(tdir) do
+       @cxx obj->Write(isempty(name) ? Ptr{UInt8}(0) : pointer(name), Int32(option), Int32(bufsize))
+   end
+end
 
 
 close(tfile::TFileInst) = begin
@@ -66,5 +55,15 @@ end
 
 
 cd(dir::ATDirectoryInst) = @cxx dir->cd()
+
+cd(f::Function, dir::ATDirectoryInst) = begin
+    const prev_dir = current_tdirectory()
+    try
+        cd(dir)
+        f()
+    finally
+        cd(prev_dir)
+    end
+end
 
 path(dir::ATDirectoryInst) = unsafe_string(@cxx dir->GetPath())

@@ -16,7 +16,7 @@ export getproxy
 
 
 create_ttree!(tdir::ATDirectoryInst, name::AbstractString, title::AbstractString) =
-    @tmp_tdir_cd tdir icxx""" new TTree($name, $title); """
+    cd(() -> icxx""" new TTree($name, $title); """, tdir)
 
 create_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::TTreePtr, name::AbstractString, value::Ref{T}, bufsize::Integer = 32000, splitlevel::Integer = 99) =
     icxx""" $ttree->Branch($name, &$value, $(Int32(bufsize)), $(Int32(splitlevel))); """
