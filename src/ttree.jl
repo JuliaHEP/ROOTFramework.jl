@@ -31,9 +31,9 @@ push!(ttree::TTreePtr) = icxx""" $ttree->Fill(); """
 show(io::IO, x::TChain) = print(io, "TChain(\"$(escape_string(getname(x)))\")")
 
 
-getname(obj::ATTreeInst) = bytestring(@cxx obj->GetName())
+getname(obj::ATTreeInst) = unsafe_string(@cxx obj->GetName())
 
-gettitle(obj::ATTreeInst) = bytestring(@cxx obj->GetTitle())
+gettitle(obj::ATTreeInst) = unsafe_string(@cxx obj->GetTitle())
 
 connect_branch!{T<:Number}(ttree::ATTreeInst, name::AbstractString, value::Ref{T}) =
     icxx""" $ttree->SetBranchAddress($name, &$value); """

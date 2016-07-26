@@ -15,7 +15,7 @@ export cpp_vector, array_view
 
 typealias CppVector{T} cxxt"std::vector<$T>"
 typealias CppVectorRef{T} cxxt"std::vector<$T>&"
-typealias CppVectorPtr{T} Cxx.CppPtr{Cxx.CxxQualType{Cxx.CppTemplate{Cxx.CppBaseType{symbol("std::vector")},Tuple{T,Cxx.CxxQualType{Cxx.CppTemplate{Cxx.CppBaseType{symbol("std::allocator")},Tuple{T}},(false,false,false)}}},(false,false,false)},(false,false,false)}
+typealias CppVectorPtr{T} Cxx.CppPtr{Cxx.CxxQualType{Cxx.CppTemplate{Cxx.CppBaseType{Symbol("std::vector")},Tuple{T,Cxx.CxxQualType{Cxx.CppTemplate{Cxx.CppBaseType{Symbol("std::allocator")},Tuple{T}},(false,false,false)}}},(false,false,false)},(false,false,false)}
 
 
 cpp_vector{T}(::Type{T}) =
@@ -48,7 +48,7 @@ copy!(dest::Vector, src::Union{CppVector, CppVectorRef, CppVectorPtr}) = begin
         end
     else
         # Faster for large sizes:
-        copy!(dest, pointer_to_array(src_data, src_length, false))
+        copy!(dest, unsafe_wrap(Array, src_data, src_length, false))
     end
 
     dest
@@ -69,7 +69,7 @@ copy!(dest::Union{CppVector, CppVectorRef, CppVectorPtr}, src::Vector) = begin
         end
     else
         # Faster for large sizes:
-        copy!(pointer_to_array(dest_data, dest_length, false), src)
+        copy!(unsafe_wrap(Array, dest_data, dest_length, false), src)
     end
 
     dest
@@ -88,7 +88,7 @@ show(io::IO, x::CppVectorRef) =
 
 
 array_view(v::Union{CppVector, CppVectorRef, CppVectorPtr}) =
-    pointer_to_array((@cxx v->data()), (@cxx v->size()), false)
+    unsafe_wrap(Array, (@cxx v->data()), (@cxx v->size()), false)
 
 
 end # module

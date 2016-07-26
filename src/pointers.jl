@@ -10,7 +10,7 @@ export delete_if_not_nullptr
 pointer(x::Union{Cxx.CppValue, Cxx.CppRef}) =
     icxx""" &$x; """
 
-isnullptr(ptr::Cxx.CppPtr) = ptr.ptr == Ptr{Void}(0)
+isnullptr(ptr::Cxx.CppPtr) = Ptr{Void}(ptr) == Ptr{Void}(0)
 
 delete_if_not_nullptr(ptr::Cxx.CppPtr) = begin
     if ! isnullptr(ptr)

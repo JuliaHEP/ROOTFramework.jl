@@ -67,4 +67,4 @@ end
 
 cd(dir::ATDirectoryInst) = @cxx dir->cd()
 
-path(dir::ATDirectoryInst) = bytestring(@cxx dir->GetPath())
+path(dir::ATDirectoryInst) = unsafe_string(@cxx dir->GetPath())

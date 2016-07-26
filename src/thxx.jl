@@ -83,9 +83,9 @@ show(io::IO, hist::AnyTH) = begin
     print(io, "$tpname($(size(hist)), \"$(escape_string(getname(hist)))\", \"$(escape_string(gettitle(hist)))\")")
 end
 
-getname(obj::AnyTHInst) = bytestring(@cxx obj->GetName())
+getname(obj::AnyTHInst) = unsafe_string(@cxx obj->GetName())
 
-gettitle(obj::AnyTHInst) = bytestring(@cxx obj->GetTitle())
+gettitle(obj::AnyTHInst) = unsafe_string(@cxx obj->GetTitle())
 
 push!{T <: Union{Integer, AbstractFloat}}(hist::AnyTH1Inst, x::T) = @cxx hist->Fill(x)
 push!{T <: Union{Integer, AbstractFloat}}(hist::AnyTH1Inst, x::NTuple{1, T}) = @cxx hist->Fill(x[1])
