@@ -1,6 +1,6 @@
 # This file is a part of ROOTFramework.jl, licensed under the MIT License (MIT).
 
-# __precompile__()
+__precompile__(false)
 
 module ROOTFramework
 
