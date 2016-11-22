@@ -1,8 +1,4 @@
-# using Cxx, ROOTFramework, Distributions, Benchmarks
-
 using ROOTFramework
-using Distributions
-
 
 output = TTreeOutput("data", "Data")
 
@@ -13,15 +9,12 @@ a = output[:a] = [0.0, 0.0]
 open(TFile, "out.root", "recreate") do tfile
     open(output, tfile)
 
-    s_dist = Normal(2.0, 2.0)
-    a_dist = [Normal(12.0, 2.0), Normal(22.0, 2.0)]
-
     @time for entry in 1:1000000
         idx.x = entry
-        s.x = rand(s_dist)
+        s.x = 2.0 + 2.0 * randn()
 
-        a[1] = rand(a_dist[1])
-        a[2] = rand(a_dist[2])
+        a[1] = 12.0 + 2.0 * randn()
+        a[2] = 22.0 + 2.0 * randn()
 
         push!(output)
     end

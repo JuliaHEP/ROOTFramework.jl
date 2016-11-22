@@ -1,4 +1,4 @@
-using Cxx, ROOTFramework, Distributions, PDMats
+using ROOTFramework, Cxx
 import JSON
 
 # Init GUI, open output file and create canvas
@@ -15,14 +15,13 @@ canvas = @cxxnew TCanvas(pointer("histplots"), pointer("Histogram Plots"))
 
 hist1 = THxx(-20:0.2:20, "hist1", "Hist")
 
-dist = Normal(0.0, 5.0)
 @time for i in 1:10000
-    push!(hist1, rand(dist))
+    push!(hist1, 5.0 * randn())
 end
 @cxx canvas->cd(1)
 draw(hist1)
 
-fit(hist1, "gaus")
+ROOTFramework.fit(hist1, "gaus")
 draw(hist1)
 
 write(tfile, hist1)
@@ -34,9 +33,8 @@ set_default_palette(:viridis)
 
 hist2 = THxx((-10:0.5:10, -10:0.5:10), "hist2", "Hist2")
 
-dist = MvNormal([0.0, 0.0], ScalMat(2, 5.0))
 @time for i in 1:100000
-    push!(hist2, (rand(dist)...))
+    push!(hist2, (3.0 * randn(), 3.0 * randn()))
 end
 @cxx canvas->cd(2)
 draw(hist2, "lego2")
@@ -51,9 +49,8 @@ hist_dict2 = JSON.parse(rootjson(hist2))
 
 hist3 = THxx((-10:0.5:10, -10:0.5:10, -10:0.5:10), "hist3", "Hist")
 
-dist = MvNormal([0.0, 0.0, 0.0], ScalMat(3, 5.0))
 @time for i in 1:100000
-    push!(hist3, (rand(dist)...))
+    push!(hist3, (3.0 * randn(), 3.0 * randn(), 3.0 * randn()))
 end
 @cxx canvas->cd(4)
 draw(hist3)

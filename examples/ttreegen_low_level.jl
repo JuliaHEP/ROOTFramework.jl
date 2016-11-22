@@ -1,6 +1,4 @@
 using ROOTFramework, Cxx
-using Distributions
-
 
 tfile = open(TFile, "out.root", "recreate")
 ttree = create_ttree!(tfile, "data", "Data")
@@ -14,15 +12,12 @@ create_branch!(ttree, "idx", idx)
 create_branch!(ttree, "s", s)
 create_branch!(ttree, "a", cpp_a)
 
-s_dist = Normal(2.0, 2.0)
-a_dist = [Normal(12.0, 2.0), Normal(22.0, 2.0)]
-
 @time for entry in 1:1000000
     idx.x = entry
-    s.x = rand(s_dist)
+    s.x = 2.0 + 2.0 * randn()
 
-    a[1] = rand(a_dist[1])
-    a[2] = rand(a_dist[2])
+    a[1] = 12.0 + 2.0 * randn()
+    a[2] = 22.0 + 2.0 * randn()
     resize!(cpp_a, length(a))
     copy!(cpp_a, a)
 
