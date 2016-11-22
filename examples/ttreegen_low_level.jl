@@ -1,4 +1,4 @@
-using ROOTFramework, ROOTFramework.CppStd
+using ROOTFramework, Cxx
 using Distributions
 
 
@@ -8,7 +8,7 @@ ttree = create_ttree!(tfile, "data", "Data")
 idx = Ref{Int32}(0)
 s = Ref(0.0)
 a = [0.0, 0.0]
-cpp_a = cpp_vector(Float64, 2)
+cpp_a = icxx""" std::vector<double>(2); """
 
 create_branch!(ttree, "idx", idx)
 create_branch!(ttree, "s", s)
@@ -24,7 +24,7 @@ a_dist = [Normal(12.0, 2.0), Normal(22.0, 2.0)]
     a[1] = rand(a_dist[1])
     a[2] = rand(a_dist[2])
     resize!(cpp_a, length(a))
-    copy!(array_view(cpp_a), a)
+    copy!(cpp_a, a)
 
     push!(ttree)
 end
