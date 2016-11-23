@@ -2,8 +2,7 @@
 
 using ROOTFramework
 
-import EasyPkg
-@EasyPkg.using_BaseTest
+using Base.Test
 
 import JSON
 

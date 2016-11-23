@@ -2,8 +2,7 @@
 
 using ROOTFramework
 
-import EasyPkg
-@EasyPkg.using_BaseTest
+using Base.Test
 
 
 @testset "TTree I/O" begin
