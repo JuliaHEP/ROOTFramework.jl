@@ -1,13 +1,13 @@
 using ROOTFramework
 
-output = TTreeOutput("data", "Data")
-
-idx = output[:idx] = Ref{Int32}(0)
-s = output[:s] = Ref(0.0)
-a = output[:a] = [0.0, 0.0]
+bindings = TTreeBindings()
+idx = bindings[:idx] = Ref(zero(Int32))
+s = bindings[:s] = Ref(zero(Float64))
+a = bindings[:a] = zeros(Float64, 2)
 
 open(TFile, "out.root", "recreate") do tfile
-    open(output, tfile)
+    ttree = create_ttree!(tfile, "data", "Data")
+    output = TTreeOutput(ttree, bindings)
 
     @time for entry in 1:1000000
         idx.x = entry
@@ -18,6 +18,4 @@ open(TFile, "out.root", "recreate") do tfile
 
         push!(output)
     end
-
-    close(output)
 end

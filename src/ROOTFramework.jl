@@ -159,12 +159,13 @@ typealias TStringPtr pcpp"TString"
 export TTreePtr
 typealias TTreePtr pcpp"TTree"
 
-export TChain, TChainPtr
+export TChain, TChainPtr, TChainInst
 typealias TChain cxxt"TChain"
 typealias TChainPtr pcpp"TChain"
+typealias TChainInst Union{TChain, TChainPtr}
 
 export ATTreeInst
-typealias ATTreeInst Union{TTreePtr, TChain}
+typealias ATTreeInst Union{TTreePtr, TChainInst}
 
 
 import EasyPkg

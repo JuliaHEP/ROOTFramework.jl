@@ -10,19 +10,19 @@ using Base.Test
     try
         fname = joinpath(scratchdir, "out.root")
 
-        tfile = TFile(fname, "recreate")
-        ttree = create_ttree(tfile, "data", "Data")
+        tfile = open(TFile, fname, "recreate")
+        ttree = create_ttree!(tfile, "data", "Data")
 
         idx = Ref{Int32}(0)
         v = Ref(0.0)
 
-        create_branch(ttree, "idx", idx)
-        create_branch(ttree, "v", v)
+        create_branch!(ttree, "idx", idx)
+        create_branch!(ttree, "v", v)
 
         for i in 1:1000000
             idx.x = i
             v.x = rand()
-            fill(ttree)
+            push!(ttree)
         end
 
         close(tfile)

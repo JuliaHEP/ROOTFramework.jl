@@ -2,133 +2,61 @@
 
 using Cxx
 
-import Base: show, push!, getindex, setindex!, isopen, open, close, write
-
-
-export TTreeOutput
-
 export create_ttree!
+export bind_branch!
 export create_branch!
 export getname
 export gettitle
-export connect_branch!
-export getproxy
 
 
 create_ttree!(tdir::ATDirectoryInst, name::AbstractString, title::AbstractString) =
     cd(() -> icxx""" new TTree($name, $title); """, tdir)
 
-create_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::TTreePtr, name::AbstractString, value::Ref{T}, bufsize::Integer = 32000, splitlevel::Integer = 99) =
-    icxx""" $ttree->Branch($name, &$value, $(Int32(bufsize)), $(Int32(splitlevel))); """
 
-create_branch!(ttree::TTreePtr, name::AbstractString, value::Cxx.CppValue, bufsize::Integer = 32000, splitlevel::Integer = 99) =
-    icxx""" $ttree->Branch($name, &$value, $(Int32(bufsize)), $(Int32(splitlevel))); """
+Base.length(tchain::TChainInst) = Int(@cxx tchain->GetEntries())
 
-push!(ttree::TTreePtr) = icxx""" $ttree->Fill(); """
+Base.get!(ttree::ATTreeInst, i::Integer) = begin
+    @cxx ttree->GetEntry(i)
+    nothing
+end
 
+Base.start(ttree::ATTreeInst) = 0
+Base.next(ttree::ATTreeInst, i::Integer) = ( (get!(ttree, i); i), i+1 )
+Base.done(ttree::ATTreeInst, i::Integer) = i >= length(ttree)
 
-
-show(io::IO, x::TChain) = print(io, "TChain(\"$(escape_string(getname(x)))\")")
-
+Base.push!(ttree::TTreePtr) = icxx""" $ttree->Fill(); """
 
 getname(obj::ATTreeInst) = unsafe_string(@cxx obj->GetName())
-
 gettitle(obj::ATTreeInst) = unsafe_string(@cxx obj->GetTitle())
 
-connect_branch!{T<:Number}(ttree::ATTreeInst, name::AbstractString, value::Ref{T}) =
-    icxx""" $ttree->SetBranchAddress($name, &$value); """
 
+bind_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::ATTreeInst, name::AbstractString, value::Ref{T}) =
+    @cxx ttree->SetBranchAddress(pointer(name), icxx"&$value;")
 
-cxx"""
-    template<typename T> struct BranchValue {
-        T* value = nullptr;
-        template<typename... Args> BranchValue(Args&&... args)
-            : value(new T(std::forward<Args>(args)...)) {}
-        ~BranchValue() { if (value != nullptr) delete value; }
-    };
-"""
+create_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::TTreePtr, name::AbstractString, value::Ref{T}; bufsize::Integer = 32000, splitlevel::Integer = 99) =
+    icxx""" $ttree->Branch($name, &$value, $(Int32(bufsize)), $(Int32(splitlevel))); """
 
-typealias BranchValue{T} cxxt"BranchValue<$T>"
+create_branch!(ttree::TTreePtr, name::AbstractString, value::Cxx.CppValue; bufsize::Integer = 32000, splitlevel::Integer = 99) =
+    icxx""" $ttree->Branch($name, &$value, $(Int32(bufsize)), $(Int32(splitlevel))); """
 
 
 
-ttree_proxy_value{T<:Union{Number, Cxx.CppPtr}}(value::Ref{T}) = nothing
-
-
-
-type TTreeOutput
-    name::AbstractString
-    title::AbstractString
-    values::Dict{Symbol, Any}
-    direct_values::Dict{Symbol, Any}
-    proxied_values::Dict{Symbol, Pair{Any, Any}}
-    ttree::ATTreeInst
-
-    TTreeOutput(name::AbstractString, title::AbstractString) = new(
-        name, title,
-        Dict{Symbol, Any}(),
-        Dict{Symbol, Any}(),
-        Dict{Symbol, Pair{Any, Any}}(),
-        TTreePtr(Ptr{Void}(0))
-    )
+TChain(tree_name::AbstractString, file_names::AbstractString...; wildcards::Bool = false) = begin
+    tchain = @cxx TChain(pointer(tree_name))
+    for f in file_names
+        push!(tchain, f, wildcards = wildcards)
+    end
+    tchain
 end
 
-
-getindex(output::TTreeOutput, key::Symbol) = output.values[key]
-
-getproxy(output::TTreeOutput, key::Symbol) = output.proxied_values[key].second
+Base.show(io::IO, x::TChain) = print(io, "TChain(\"$(escape_string(getname(x)))\")")
 
 
-setindex!(output::TTreeOutput, value::Any, key::Symbol) = begin
-    isopen(output) && error("Can't add values to TTreeOutput while open")
-
-    output.values[key] = value
-
-    const proxy = ttree_proxy_value(value)
-    if proxy == nothing
-        # info("Adding branch $(key) of type $(typeof(value)) to TTreeOutput")
-        output.direct_values[key] = value
+Base.push!(tchain::TChainInst, file_name::AbstractString; wildcards::Bool = false) = begin
+    if wildcards
+        @cxx tchain->Add(pointer(file_name))
     else
-        # info("Adding branch $(key) of type $(typeof(value)) to TTreeOutput via proxy of type $(typeof(proxy))")
-        output.proxied_values[key] = Pair{Any, Any}(value, proxy)
+        @cxx tchain->AddFile(pointer(file_name))
     end
-
-    output
-end
-
-
-isopen(output::TTreeOutput) = output.ttree != TTreePtr(Ptr{Void}(0))
-
-
-open(output::TTreeOutput, tdir::ATDirectoryInst) = begin
-    close(output)
-    # info("Creating ttree $(output.name) in $(tdir)")
-    output.ttree = create_ttree!(tdir, output.name, output.title)
-    for (key, value) in output.direct_values
-        # info("Creating branch $(string(key)) of type $(typeof(value)) in $(output.ttree)")
-        create_branch!(output.ttree, string(key), value)
-    end
-    for (key, (_, proxy)) in output.proxied_values
-        # info("Creating branch $(string(key)) of type $(typeof(proxy)) in $(output.ttree)")
-        create_branch!(output.ttree, string(key), proxy)
-    end
-end
-
-
-close(output::TTreeOutput) = begin
-    if isopen(output)
-        const ttree = output.ttree
-        output.ttree = TTreePtr(Ptr{Void}(0))
-    end
-end
-
-
-push!(output::TTreeOutput) = begin
-    assert(isopen(output))
-    for (_, (value, proxy)) in output.proxied_values
-        set_proxy_from_value!(proxy, value)
-    end
-    push!(output.ttree)
-
-    nothing
+    tchain
 end
