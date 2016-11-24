@@ -95,6 +95,8 @@ bind_branch!(ttree::ATTreeInst, name::AbstractString, value::CxxObjWithPtrRef) =
 create_branch!(ttree::ATTreeInst, name::AbstractString, value::CxxObjWithPtrRef; kwargs...) =
    create_branch!(ttree, name, value.ptrref, kwargs...)
 
+ttree_binding_proxy(value::CxxObjWithPtrRef) = nothing
+
 Base.copy!(a, b::CxxObjWithPtrRef) = copy!(a, b.x)
 Base.copy!(a::CxxObjWithPtrRef, b) = copy!(a.x, b)
 Base.copy!(a::CxxObjWithPtrRef, b::CxxObjWithPtrRef) = copy!(a.x, b.x)
