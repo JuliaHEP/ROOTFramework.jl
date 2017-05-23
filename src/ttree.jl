@@ -13,7 +13,7 @@ create_ttree!(tdir::ATDirectoryInst, name::AbstractString, title::AbstractString
     cd(() -> icxx""" new TTree($name, $title); """, tdir)
 
 
-Base.size(ttree::ATTreeInst) = (length(),)
+Base.size(ttree::ATTreeInst) = (length(ttree),)
 Base.length(ttree::ATTreeInst) = Int(@cxx ttree->GetEntries())
 
 Base.getindex(ttree::ATTreeInst, i::Integer) = begin
@@ -31,33 +31,14 @@ getname(obj::ATTreeInst) = unsafe_string(@cxx obj->GetName())
 gettitle(obj::ATTreeInst) = unsafe_string(@cxx obj->GetTitle())
 
 
-bind_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::ATTreeInst, name::AbstractString, value::Ref{T}) =
+bind_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::ATTreeInst, name::AbstractString, value::Ref{T}) = begin
+    @cxx ttree->SetBranchStatus(pointer(name), true);
+    @cxx ttree->AddBranchToCache(pointer(name), true);
     @cxx ttree->SetBranchAddress(pointer(name), icxx"&$value;")
+end
 
 create_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::TTreePtr, name::AbstractString, value::Ref{T}; bufsize::Integer = 32000, splitlevel::Integer = 99) =
     icxx""" $ttree->Branch($name, &$value, $(Int32(bufsize)), $(Int32(splitlevel))); """
 
 create_branch!(ttree::TTreePtr, name::AbstractString, value::Cxx.CppValue; bufsize::Integer = 32000, splitlevel::Integer = 99) =
     icxx""" $ttree->Branch($name, &$value, $(Int32(bufsize)), $(Int32(splitlevel))); """
-
-
-
-TChain(tree_name::AbstractString, file_names::AbstractString...; wildcards::Bool = false) = begin
-    tchain = @cxx TChain(pointer(tree_name))
-    for f in file_names
-        push!(tchain, f, wildcards = wildcards)
-    end
-    tchain
-end
-
-Base.show(io::IO, x::TChain) = print(io, "TChain(\"$(escape_string(getname(x)))\")")
-
-
-Base.push!(tchain::TChainInst, file_name::AbstractString; wildcards::Bool = false) = begin
-    if wildcards
-        @cxx tchain->Add(pointer(file_name))
-    else
-        @cxx tchain->AddFile(pointer(file_name))
-    end
-    tchain
-end

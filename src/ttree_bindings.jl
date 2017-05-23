@@ -5,6 +5,7 @@ using Cxx
 export TTreeBindings
 export TTreeInput
 export TTreeOutput
+export TChainInput
 
 export ttree_binding_proxy
 
@@ -120,6 +121,8 @@ type TTreeInput
 end
 
 
+Base.length(input::TTreeInput) = length(input.ttree)
+
 Base.start(input::TTreeInput) = start(input.ttree)
 
 Base.next(input::TTreeInput, i) = begin
@@ -149,3 +152,64 @@ push!(output::TTreeOutput) = begin
     push!(output.ttree)
     nothing
 end
+
+
+
+type TChainInput
+    tchain::TChainPtr
+    bindings::TTreeBindings
+end
+
+
+function Base.open(::Type{TChainInput}, bindings::TTreeBindings, treename::AbstractString, filenames::AbstractString...; wildcards::Bool = false)
+    tchain = lock(gROOTMutex()) do
+        icxx"new TChain($treename);"
+    end
+
+    if wildcards
+        for filename in filenames
+            @cxx tchain->Add(pointer(filename))
+        end
+    else
+        for filename in filenames
+            @cxx tchain->AddFile(pointer(filename))
+        end
+    end
+
+    @cxx tchain->SetCacheSize(-1);
+    @cxx tchain->SetBranchStatus(pointer("*"), false);
+    bind_branches!(tchain, bindings)
+
+    result = TChainInput(tchain, bindings)
+    finalizer(result, close)
+    result
+end
+
+Base.open(::Type{TChainInput}, treename::AbstractString, filenames::AbstractString...; kwargs...) =
+    open(TChainInput, TTreeBindings(), treename, filenames...; kwargs...)
+
+
+Base.isopen(input::TChainInput) = (input.tchain != C_NULL)
+
+function Base.close(input::TChainInput)
+    if isopen(input)
+        tchain = lock(gROOTMutex()) do
+            icxx"delete $(input.tchain);"
+        end
+        input.tchain = icxx"(TChain*)(nullptr);"
+    end
+    nothing
+end
+
+
+Base.length(input::TChainInput) = length(input.tchain)
+
+Base.start(input::TChainInput) = start(input.tchain)
+
+Base.next(input::TChainInput, i) = begin
+    result = next(input.tchain, i)
+    copy_from_proxies!(input.bindings)
+    result
+end
+
+Base.done(input::TChainInput, i) = done(input.tchain, i)
