@@ -1,6 +1,6 @@
 using ROOTFramework, Cxx
 
-rootgui()
+#rootgui()
 
 tchain = TChain("data", "out.root")
 
@@ -19,10 +19,11 @@ info("$tchain has $(length(tchain)) entries.")
 
 hist = THxx(Float64, -10:0.1:30, "hist", "Hist")
 
-@time for i in tchain
+n = 0
+@time for _ in tchain
     copy!(a, cpp_a)
-
-    assert(idx.x == i + 1)
+    n += 1
+    @assert idx.x == n
     push!(hist, s.x)
     for x in a push!(hist, x) end
 end

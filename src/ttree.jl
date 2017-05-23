@@ -13,16 +13,17 @@ create_ttree!(tdir::ATDirectoryInst, name::AbstractString, title::AbstractString
     cd(() -> icxx""" new TTree($name, $title); """, tdir)
 
 
-Base.length(tchain::TChainInst) = Int(@cxx tchain->GetEntries())
+Base.size(ttree::ATTreeInst) = (length(),)
+Base.length(ttree::ATTreeInst) = Int(@cxx ttree->GetEntries())
 
-Base.get!(ttree::ATTreeInst, i::Integer) = begin
-    @cxx ttree->GetEntry(i)
+Base.getindex(ttree::ATTreeInst, i::Integer) = begin
+    @cxx ttree->GetEntry(i - 1)
     nothing
 end
 
-Base.start(ttree::ATTreeInst) = 0
-Base.next(ttree::ATTreeInst, i::Integer) = ( (get!(ttree, i); i), i+1 )
-Base.done(ttree::ATTreeInst, i::Integer) = i >= length(ttree)
+Base.start(ttree::ATTreeInst) = 1
+Base.next(ttree::ATTreeInst, i::Integer) = ( getindex(ttree, i), i+1 )
+Base.done(ttree::ATTreeInst, i::Integer) = i > length(ttree)
 
 Base.push!(ttree::TTreePtr) = icxx""" $ttree->Fill(); """
 
