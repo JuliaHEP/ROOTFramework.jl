@@ -47,14 +47,21 @@ function module__init__()
     cxxinclude("TH3D.h")
     cxxinclude("TH3F.h")
     cxxinclude("TH3I.h")
+    cxxinclude("TROOT.h")
     cxxinclude("TString.h")
     cxxinclude("TStyle.h")
     cxxinclude("TSystem.h")
+    cxxinclude("TThread.h")
     cxxinclude("TTree.h")
 end
 
 module__init__()
 
+
+# Enable thread-safety for ROOT:
+icxx"TThread::Initialize();"
+
+typealias TVirtualMutexPtr pcpp"TVirtualMutex"
 
 
 export TBrowserPtr
