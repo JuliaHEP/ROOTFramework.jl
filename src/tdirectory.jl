@@ -8,7 +8,11 @@ export current_tdirectory
 export path
 
 
-current_tdirectory() = icxx""" (TDirectory*)TDirectory::CurrentDirectory(); """
+current_tdirectory() = begin
+    lock(gROOTMutex()) do
+        icxx""" (TDirectory*)TDirectory::CurrentDirectory(); """
+    end
+end
 
 
 show(io::IO, x::TDirectoryRef) =
@@ -20,11 +24,13 @@ show(io::IO, x::TDirectoryPtr) =
 
 
 open(::Type{TFile}, fname::AbstractString, mode::AbstractString = "", ftitle::AbstractString = "", compress::Integer = 1) = begin
-    const prev_dir = current_tdirectory()
-    try
-        @cxx TFile(pointer(fname), pointer(mode), pointer(ftitle), Int32(compress))
-    finally
-        cd(prev_dir)
+    lock(gROOTMutex()) do
+        const prev_dir = current_tdirectory()
+        try
+            @cxx TFile(pointer(fname), pointer(mode), pointer(ftitle), Int32(compress))
+        finally
+            cd(prev_dir)
+        end
     end
 end
 
@@ -52,7 +58,11 @@ end
 
 
 
-cd(dir::ATDirectoryInst) = @cxx dir->cd()
+cd(dir::ATDirectoryInst) = begin
+    lock(gROOTMutex()) do
+        @cxx dir->cd()
+    end
+end
 
 cd(f::Function, dir::ATDirectoryInst) = begin
     const prev_dir = current_tdirectory()
