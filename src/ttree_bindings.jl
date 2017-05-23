@@ -30,11 +30,11 @@ Base.setindex!(bindings::TTreeBindings, value::Any, key::Symbol) = begin
 
     const proxy = ttree_binding_proxy(value)
     if proxy == nothing
-        info("Binding branch name $(key) to value of type $(typeof(value))")
+        # info("Binding branch name $(key) to value of type $(typeof(value))")
         haskey(bindings.proxied_values, key) && delete!(bindings.proxied_values, key)
         bindings.direct_values[key] = value
     else
-        info("Binding branch name  $(key) to value of type $(typeof(value)) via proxy of type $(typeof(proxy))")
+        # info("Binding branch name  $(key) to value of type $(typeof(value)) via proxy of type $(typeof(proxy))")
         haskey(bindings.direct_values, key) && delete!(bindings.direct_values, key)
         bindings.proxied_values[key] = Pair{Any, Any}(value, proxy)
     end
@@ -58,22 +58,22 @@ end
 
 bind_branches!(ttree::ATTreeInst, bindings::TTreeBindings) = begin
     for (key, value) in bindings.direct_values
-        info("Binding branch $(string(key)) of type $(typeof(value)) in $(ttree)")
+        # info("Binding branch $(string(key)) of type $(typeof(value)) in $(ttree)")
         bind_branch!(ttree, string(key), value)
     end
     for (key, (_, proxy)) in bindings.proxied_values
-        info("Binding branch $(string(key)) of type $(typeof(proxy)) in $(ttree)")
+        # info("Binding branch $(string(key)) of type $(typeof(proxy)) in $(ttree)")
         bind_branch!(ttree, string(key), proxy)
     end
 end
 
 create_branches!(ttree::ATTreeInst, bindings::TTreeBindings) = begin
     for (key, value) in bindings.direct_values
-        info("Creating branch $(string(key)) of type $(typeof(value)) in $(ttree)")
+        # info("Creating branch $(string(key)) of type $(typeof(value)) in $(ttree)")
         create_branch!(ttree, string(key), value)
     end
     for (key, (_, proxy)) in bindings.proxied_values
-        info("Creating branch $(string(key)) of type $(typeof(proxy)) in $(ttree)")
+        # info("Creating branch $(string(key)) of type $(typeof(proxy)) in $(ttree)")
         create_branch!(ttree, string(key), proxy)
     end
 end
