@@ -109,7 +109,7 @@ Base.copy!(a::CxxObjWithPtrRef, b::AbstractVector) = (resize!(a.x, length(b)); c
 
 
 
-type TTreeInput
+type TTreeInput <: AbstractVector{Void}
     ttree::ATTreeInst
     bindings::TTreeBindings
 
@@ -121,41 +121,19 @@ type TTreeInput
 end
 
 
-Base.length(input::TTreeInput) = length(input.ttree)
+Base.show(io::IO, x::TTreeInput) = show(io, MIME"text/plain"(), x)
+Base.show(io::IO, ::MIME"text/plain", x::TTreeInput) = Base.show_default(io, x)
 
-Base.start(input::TTreeInput) = start(input.ttree)
+Base.size(input::TTreeInput) = (length(input.ttree),)
 
-Base.next(input::TTreeInput, i) = begin
-    result = next(input.ttree, i)
+Base.getindex(input::TTreeInput, i::Integer) = begin
+    result = getindex(input.ttree, i)
     copy_from_proxies!(input.bindings)
     result
 end
 
-Base.done(input::TTreeInput, i) = done(input.ttree, i)
 
-
-
-type TTreeOutput
-    ttree::TTreePtr
-    bindings::TTreeBindings
-
-    TTreeOutput(ttree::TTreePtr, bindings::TTreeBindings) = begin
-        output = new(ttree, bindings)
-        create_branches!(ttree, bindings)
-        output
-    end
-end
-
-
-push!(output::TTreeOutput) = begin
-    copy_to_proxies!(output.bindings)
-    push!(output.ttree)
-    nothing
-end
-
-
-
-type TChainInput
+type TChainInput <: AbstractVector{Void}
     tchain::TChainPtr
     bindings::TTreeBindings
 end
@@ -185,9 +163,13 @@ function Base.open(::Type{TChainInput}, bindings::TTreeBindings, treename::Abstr
     result
 end
 
+
+Base.show(io::IO, x::TChainInput) = show(io, MIME"text/plain"(), x)
+Base.show(io::IO, ::MIME"text/plain", x::TChainInput) = Base.show_default(io, x)
+
+
 Base.open(::Type{TChainInput}, treename::AbstractString, filenames::AbstractString...; kwargs...) =
     open(TChainInput, TTreeBindings(), treename, filenames...; kwargs...)
-
 
 Base.isopen(input::TChainInput) = (input.tchain != C_NULL)
 
@@ -202,14 +184,29 @@ function Base.close(input::TChainInput)
 end
 
 
-Base.length(input::TChainInput) = length(input.tchain)
+Base.size(input::TChainInput) = (length(input.tchain),)
 
-Base.start(input::TChainInput) = start(input.tchain)
-
-Base.next(input::TChainInput, i) = begin
-    result = next(input.tchain, i)
+Base.getindex(input::TChainInput, i::Integer) = begin
+    result = getindex(input.tchain, i)
     copy_from_proxies!(input.bindings)
     result
 end
 
-Base.done(input::TChainInput, i) = done(input.tchain, i)
+
+type TTreeOutput
+    ttree::TTreePtr
+    bindings::TTreeBindings
+
+    TTreeOutput(ttree::TTreePtr, bindings::TTreeBindings) = begin
+        output = new(ttree, bindings)
+        create_branches!(ttree, bindings)
+        output
+    end
+end
+
+
+push!(output::TTreeOutput) = begin
+    copy_to_proxies!(output.bindings)
+    push!(output.ttree)
+    nothing
+end
