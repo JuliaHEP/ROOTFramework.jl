@@ -25,7 +25,7 @@ ROOTFramework.fit(hist1, "gaus")
 draw(hist1)
 
 write(tfile, hist1)
-hist_dict1 = JSON.parse(rootjson(hist1))
+#hist_dict1 = JSON.parse(rootjson(hist1))
 
 # TH2
 
@@ -41,8 +41,8 @@ draw(hist2, "lego2")
 @cxx canvas->cd(3)
 draw(hist2, "colz1")
 
-write(tfile, hist2)
-hist_dict2 = JSON.parse(rootjson(hist2))
+#write(tfile, hist2)
+#hist_dict2 = JSON.parse(rootjson(hist2))
 
 
 # TH3
@@ -55,15 +55,15 @@ end
 @cxx canvas->cd(4)
 draw(hist3)
 
-write(tfile, hist3)
-hist3_dict = JSON.parse(rootjson(hist3))
+#write(tfile, hist3)
+#hist3_dict = JSON.parse(rootjson(hist3))
 
 
 # Done
 
-write(tfile, canvas)
+#write(tfile, canvas)
 
-close(tfile)
+#close(tfile)
 
 
 #=

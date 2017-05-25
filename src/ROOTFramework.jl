@@ -4,31 +4,9 @@ __precompile__(false)
 
 module ROOTFramework
 
-using Cxx
-
-
-function module__init__()
-    incdir = strip(readstring(`root-config --incdir`))
-    libdir = strip(readstring(`root-config --libdir`))
-
-    addHeaderDir(incdir, kind=C_System)
-
-    Libdl.dlopen(joinpath(libdir, "libGui.so"), Libdl.RTLD_GLOBAL)
-    Libdl.dlopen(joinpath(libdir, "libHist.so"), Libdl.RTLD_GLOBAL)
-    Libdl.dlopen(joinpath(libdir, "libTree.so"), Libdl.RTLD_GLOBAL)
-    Libdl.dlopen(joinpath(libdir, "libRHTTP.so"), Libdl.RTLD_GLOBAL)
-end
-
-module__init__()
-
-
-# Enable thread-safety for ROOT:
-cxxinclude("TThread.h")
-icxx"TThread::Initialize();"
-
+using ROOT
 
 include.([
-    "tvirtualmutex.jl",
     "pointers.jl",
     "tstring.jl",
     "gui.jl",
