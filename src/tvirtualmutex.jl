@@ -2,6 +2,11 @@
 
 using Cxx
 
+cxxinclude("TROOT.h")
+cxxinclude("TVirtualMutex.h")
+
+typealias TVirtualMutexPtr pcpp"TVirtualMutex"
+
 
 Base.lock(mutex::TVirtualMutexPtr) = @cxx mutex->Lock();
 

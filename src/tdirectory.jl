@@ -2,10 +2,27 @@
 
 using Cxx
 
+cxxinclude("TDirectory.h")
+cxxinclude("TFile.h")
+
 import Base: cd, show, write, open, close
 
 export current_tdirectory
 export path
+
+
+export TDirectoryRef, TDirectoryPtr, TDirectoryInst
+typealias TDirectoryRef rcpp"TDirectory"
+typealias TDirectoryPtr pcpp"TDirectory"
+typealias TDirectoryInst Union{TDirectoryRef, TDirectoryPtr}
+
+export TFile, TFilePtr, TFileInst
+typealias TFile cxxt"TFile"
+typealias TFilePtr pcpp"TFile"
+typealias TFileInst Union{TFile, TFilePtr}
+
+export ATDirectoryInst
+typealias ATDirectoryInst Union{TDirectoryInst, TFileInst}
 
 
 current_tdirectory() = begin

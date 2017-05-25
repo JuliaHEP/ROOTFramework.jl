@@ -2,7 +2,13 @@
 
 using Cxx
 
+cxxinclude("TString.h")
+
 import Base: string, show
+
+export TString, TStringPtr
+typealias TString cxxt"TString"
+typealias TStringPtr pcpp"TString"
 
 
 TString() = @cxx TString()

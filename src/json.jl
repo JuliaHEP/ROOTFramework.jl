@@ -2,6 +2,8 @@
 
 using Cxx
 
+cxxinclude("TBufferJSON.h")
+
 export rootjson
 
 

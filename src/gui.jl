@@ -2,6 +2,8 @@
 
 using Cxx
 
+cxxinclude("TApplication.h")
+
 export rootgui
 
 

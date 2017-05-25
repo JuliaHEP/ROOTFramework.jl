@@ -2,6 +2,8 @@
 
 using Cxx
 
+cxxinclude("TStyle.h")
+
 export set_default_palette
 
 
@@ -72,7 +74,7 @@ const color_palette_ids = Dict(
 
 
 set_default_palette(palette::Symbol, alpha::Real = 1.0) = begin
-    id = color_palette_ids(palette)
+    id = color_palette_ids[palette]
     icxx"gStyle->SetPalette($id, 0, $alpha);"
     nothing
 end
