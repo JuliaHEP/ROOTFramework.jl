@@ -13,15 +13,15 @@ export gettitle
 
 
 export TTreePtr
-typealias TTreePtr pcpp"TTree"
+const TTreePtr = pcpp"TTree"
 
 export TChain, TChainPtr, TChainInst
-typealias TChain cxxt"TChain"
-typealias TChainPtr pcpp"TChain"
-typealias TChainInst Union{TChain, TChainPtr}
+const TChain = cxxt"TChain"
+const TChainPtr = pcpp"TChain"
+const TChainInst = Union{TChain, TChainPtr}
 
 export ATTreeInst
-typealias ATTreeInst Union{TTreePtr, TChainInst}
+const ATTreeInst = Union{TTreePtr, TChainInst}
 
 
 create_ttree!(tdir::ATDirectoryInst, name::AbstractString, title::AbstractString) =

@@ -7,7 +7,7 @@ cxxinclude("TBrowser.h")
 export new_TBrowser
 
 export TBrowserPtr
-typealias TBrowserPtr pcpp"TBrowser"
+const TBrowserPtr = pcpp"TBrowser"
 
 
 new_TBrowser() = icxx""" new TBrowser(); """

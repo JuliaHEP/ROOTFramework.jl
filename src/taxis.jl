@@ -7,7 +7,7 @@ cxxinclude("TAxis.h")
 import Base: range
 
 export TAxisPtr
-typealias TAxisPtr pcpp"TAxis"
+const TAxisPtr = pcpp"TAxis"
 
 
 axis_spec(edge::Range) = begin

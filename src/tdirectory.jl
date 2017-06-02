@@ -12,17 +12,17 @@ export path
 
 
 export TDirectoryRef, TDirectoryPtr, TDirectoryInst
-typealias TDirectoryRef rcpp"TDirectory"
-typealias TDirectoryPtr pcpp"TDirectory"
-typealias TDirectoryInst Union{TDirectoryRef, TDirectoryPtr}
+const TDirectoryRef = rcpp"TDirectory"
+const TDirectoryPtr = pcpp"TDirectory"
+const TDirectoryInst = Union{TDirectoryRef, TDirectoryPtr}
 
 export TFile, TFilePtr, TFileInst
-typealias TFile cxxt"TFile"
-typealias TFilePtr pcpp"TFile"
-typealias TFileInst Union{TFile, TFilePtr}
+const TFile = cxxt"TFile"
+const TFilePtr = pcpp"TFile"
+const TFileInst = Union{TFile, TFilePtr}
 
 export ATDirectoryInst
-typealias ATDirectoryInst Union{TDirectoryInst, TFileInst}
+const ATDirectoryInst = Union{TDirectoryInst, TFileInst}
 
 
 current_tdirectory() = begin

@@ -7,7 +7,7 @@ cxxinclude("TFitResultPtr.h")
 import Base: show
 
 
-typealias TFitResultPtr cxxt"TFitResultPtr"
+const TFitResultPtr = cxxt"TFitResultPtr"
 
 
 show(io::IO, x::TFitResultPtr) = print(io, "TFitResultPtr($(convert(UInt, (@cxx x->Get()).ptr)))")
