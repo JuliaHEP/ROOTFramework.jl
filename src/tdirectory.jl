@@ -59,7 +59,7 @@ show(io::IO, x::TFilePtr) =
 
 
 write(tdir::ATDirectoryInst, obj::Cxx.CppValue, name::AbstractString = "", option::Integer = 0, bufsize::Integer = 0) =
-    write(tdir, pointer(obj), name, option, bufsize)
+    write(tdir, pointer_to(obj), name, option, bufsize)
 
 write(tdir::ATDirectoryInst, obj::Cxx.CppPtr, name::AbstractString = "", option::Integer = 0, bufsize::Integer = 0) = begin
     cd(tdir) do

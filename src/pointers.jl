@@ -7,7 +7,7 @@ import Base: pointer
 export isnullptr
 export delete_if_not_nullptr
 
-pointer(x::Union{Cxx.CppValue, Cxx.CppRef}) =
+pointer_to(x::Union{Cxx.CppValue, Cxx.CppRef}) =
     icxx""" &$x; """
 
 isnullptr(ptr::Cxx.CppPtr) = Ptr{Void}(ptr) == Ptr{Void}(0)
