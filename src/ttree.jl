@@ -47,10 +47,36 @@ gettitle(obj::ATTreeInst) = unsafe_string(@cxx obj->GetTitle())
 
 
 bind_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::ATTreeInst, name::AbstractString, value::Ref{T}) = begin
-    @cxx ttree->SetBranchStatus(pointer(name), true);
-    @cxx ttree->AddBranchToCache(pointer(name), true);
-    @cxx ttree->SetBranchAddress(pointer(name), icxx"&$value;")
+    ttree_obj = auto_deref(ttree)
+    icxx"""
+        $ttree_obj.SetBranchStatus($name, true);
+        $ttree_obj.AddBranchToCache($name, true);
+        $ttree_obj.SetBranchAddress($name, &$value);
+    """
 end
+
+# Workaround for Int64, else ROOT will give this error:
+# The pointer type given "Long_t" does not correspond to the type needed "Long64_t"
+bind_branch!(ttree::ATTreeInst, name::AbstractString, value::Ref{Int64}) = begin
+    ttree_obj = auto_deref(ttree)
+    icxx"""
+        $ttree_obj.SetBranchStatus($name, true);
+        $ttree_obj.AddBranchToCache($name, true);
+        $ttree_obj.SetBranchAddress($name, (Long64_t*)&$value);
+    """
+end
+
+# Workaround for UInt64, else ROOT will give this error:
+# The pointer type given "ULong_t" does not correspond to the type needed "ULong64_t"
+bind_branch!(ttree::ATTreeInst, name::AbstractString, value::Ref{UInt64}) = begin
+    ttree_obj = auto_deref(ttree)
+    icxx"""
+        $ttree_obj.SetBranchStatus($name, true);
+        $ttree_obj.AddBranchToCache($name, true);
+        $ttree_obj.SetBranchAddress($name, (ULong64_t*)&$value);
+    """
+end
+
 
 create_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::TTreePtr, name::AbstractString, value::Ref{T}; bufsize::Integer = 32000, splitlevel::Integer = 99) =
     icxx""" $ttree->Branch($name, &$value, $(Int32(bufsize)), $(Int32(splitlevel))); """
