@@ -17,3 +17,7 @@ delete_if_not_nullptr(ptr::Cxx.CppPtr) = begin
         icxx""" delete $ptr; """
     end
 end
+
+auto_deref(v::Cxx.CppPtr) = icxx"*$(v);"::Cxx.CppRef
+auto_deref(v::Cxx.CppValue) = v
+auto_deref(v::Cxx.CppRef) = v
