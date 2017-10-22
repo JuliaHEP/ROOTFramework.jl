@@ -6,20 +6,18 @@ module ROOTFramework
 
 using ROOT
 
-include.([
-    "pointers.jl",
-    "tstring.jl",
-    "gui.jl",
-    "tcanvas.jl",
-    "tbrowser.jl",
-    "tcolor.jl",
-    "json.jl",
-    "taxis.jl",
-    "tdirectory.jl",
-    "tfitresult.jl",
-    "thxx.jl",
-    "ttree.jl",
-    "ttree_bindings.jl",
-])
+include("pointers.jl")
+include("tstring.jl")
+include("gui.jl")
+include("tcanvas.jl")
+include("tbrowser.jl")
+include("tcolor.jl")
+include("json.jl")
+include("taxis.jl")
+include("tdirectory.jl")
+include("tfitresult.jl")
+include("thxx.jl")
+include("ttree.jl")
+include("ttree_bindings.jl")
 
 end # module
