@@ -2,7 +2,7 @@
 
 using ROOTFramework
 
-using Base.Test
+using Compat.Test
 
 
 @testset "TTree I/O" begin
