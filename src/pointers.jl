@@ -10,6 +10,9 @@ export delete_if_not_nullptr
 pointer_to(x::Union{Cxx.CppValue, Cxx.CppRef}) =
     icxx""" &$x; """
 
+as_pointer(x::Cxx.CppPtr) = x
+as_pointer(x::Union{Cxx.CppValue, Cxx.CppRef}) = pointer_to(x)
+
 isnullptr(ptr::Cxx.CppPtr) = Ptr{Void}(ptr) == Ptr{Void}(0)
 
 delete_if_not_nullptr(ptr::Cxx.CppPtr) = begin
