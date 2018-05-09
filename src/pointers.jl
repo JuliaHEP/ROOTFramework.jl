@@ -4,9 +4,6 @@ using Cxx
 
 import Base: pointer
 
-export isnullptr
-export delete_if_not_nullptr
-
 pointer_to(x::Union{Cxx.CppValue, Cxx.CppRef}) =
     icxx""" &$x; """
 
