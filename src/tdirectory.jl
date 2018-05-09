@@ -39,6 +39,40 @@ show(io::IO, x::TDirectoryPtr) =
     print(io, "TDirectoryPtr(\"$(escape_string(path(x)))\")")
 
 
+function Base.keys(tdir::ATDirectoryInst)
+    tdir_ptr = as_pointer(tdir)
+    names = icxx"""
+        std::vector<std::string> names;
+
+        TIter nextobj($tdir_ptr->GetList());
+        TObject *obj = nullptr;
+        while ((obj = (TObject *) nextobj())) {
+            // std::cout << obj->GetName() << std::endl;
+            names.push_back(obj->GetName());
+        }
+
+        TIter nextkey($tdir_ptr->GetListOfKeys());
+        TKey *key = nullptr;
+        while ((key = (TKey *) nextkey())) {
+            // std::cout << key->GetName() << std::endl;
+            names.push_back(key->GetName());
+        }
+        names;
+    """
+
+    unique(map(String, names))
+end
+
+
+Base.haskey(tdir::ATDirectoryInst, key::String) = !isnullptr(@cxx tdir->FindKey(pointer(key)))
+
+
+function Base.getindex(tdir::ATDirectoryInst, key::String)
+    ptr = @cxx tdir->Get(pointer(key))
+    isnullptr(ptr) ? throw(KeyError(key)) : dyncast(ptr)
+end
+
+
 
 open(::Type{TFile}, fname::AbstractString, mode::AbstractString = "", ftitle::AbstractString = "", compress::Integer = 1) = begin
     lock(gROOTMutex()) do
