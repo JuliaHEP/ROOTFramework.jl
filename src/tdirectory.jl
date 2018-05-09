@@ -103,8 +103,14 @@ end
 
 
 close(tfile::TFileInst) = begin
-    @cxx tfile->Write()
-    @cxx tfile->Close()
+    tfile_ptr = as_pointer(tfile)
+    icxx"""
+        if ($tfile_ptr->IsWritable()) {
+            $tfile_ptr->Write();
+            $tfile_ptr->Close();
+        }
+    """
+    nothing
 end
 
 
