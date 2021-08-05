@@ -10,7 +10,7 @@ export TChainInput
 export ttree_binding_proxy
 
 
-type TTreeBindings
+struct TTreeBindings
     values::Dict{Symbol, Any}
     direct_values::Dict{Symbol, Any}
     proxied_values::Dict{Symbol, Pair{Any, Any}}
@@ -28,7 +28,7 @@ Base.getindex(bindings::TTreeBindings, key::Symbol) = bindings.values[key]
 Base.setindex!(bindings::TTreeBindings, value::Any, key::Symbol) = begin
     bindings.values[key] = value
 
-    const proxy = ttree_binding_proxy(value)
+    proxy = ttree_binding_proxy(value)
     if proxy == nothing
         # info("Binding branch name $(key) to value of type $(typeof(value))")
         haskey(bindings.proxied_values, key) && delete!(bindings.proxied_values, key)
@@ -79,16 +79,16 @@ create_branches!(ttree::ATTreeInst, bindings::TTreeBindings) = begin
 end
 
 
-ttree_binding_proxy{T<:Union{Cxx.CxxBuiltinTs, Cxx.CppPtr}}(value::Ref{T}) = nothing
+ttree_binding_proxy(value::Ref{T}) where T = nothing
 
 
 
-immutable CxxObjWithPtrRef{T,N,CVR}
-    x::Cxx.CppValue{T,N}
-    ptrref::Ref{Cxx.CppPtr{T,CVR}}
+struct CxxObjWithPtrRef{T,N,CVR}
+    x::CppValue{T,N}
+    ptrref::Ref{CppPtr{T,CVR}}
 end
 
-CxxObjWithPtrRef(x::Cxx.CppValue) = CxxObjWithPtrRef(x, Ref(icxx"&$x;"))
+CxxObjWithPtrRef(x::CppValue) = CxxObjWithPtrRef(x, Ref(icxx"&$x;"))
 
 bind_branch!(ttree::ATTreeInst, name::AbstractString, value::CxxObjWithPtrRef) =
    bind_branch!(ttree, name, value.ptrref)
@@ -103,13 +103,13 @@ Base.copy!(a::CxxObjWithPtrRef, b) = copy!(a.x, b)
 Base.copy!(a::CxxObjWithPtrRef, b::CxxObjWithPtrRef) = copy!(a.x, b.x)
 
 
-ttree_binding_proxy{T}(value::AbstractVector{T}) = CxxObjWithPtrRef(icxx"std::vector<$T>();")
+ttree_binding_proxy(value::AbstractVector{T}) where T = CxxObjWithPtrRef(icxx"std::vector<$T>();")
 Base.copy!(a::AbstractVector, b::CxxObjWithPtrRef) = (resize!(a, length(b.x)); copy!(a, b.x))
 Base.copy!(a::CxxObjWithPtrRef, b::AbstractVector) = (resize!(a.x, length(b)); copy!(a.x, b))
 
 
 
-type TTreeInput <: AbstractVector{Void}
+struct TTreeInput <: AbstractVector{Nothing}
     ttree::ATTreeInst
     bindings::TTreeBindings
 
@@ -133,7 +133,7 @@ Base.getindex(input::TTreeInput, i::Integer) = begin
 end
 
 
-type TChainInput <: AbstractVector{Void}
+mutable struct TChainInput <: AbstractVector{Nothing}
     tchain::TChainPtr
     bindings::TTreeBindings
 end
@@ -159,7 +159,7 @@ function Base.open(::Type{TChainInput}, bindings::TTreeBindings, treename::Abstr
     bind_branches!(tchain, bindings)
 
     result = TChainInput(tchain, bindings)
-    finalizer(result, close)
+    finalizer(close, result)
     result
 end
 
@@ -193,7 +193,7 @@ Base.getindex(input::TChainInput, i::Integer) = begin
 end
 
 
-type TTreeOutput
+struct TTreeOutput
     ttree::TTreePtr
     bindings::TTreeBindings
 

@@ -1,7 +1,5 @@
 using ROOTFramework, Cxx
 
-#rootgui()
-
 idx = Ref{Int32}(0)
 s = Ref(0.0)
 a = [0.0, 0.0]
@@ -10,7 +8,7 @@ cpp_a = icxx""" std::vector<double>(2); """
 A = Float64[]
 
 open(TChainInput, "data", "out.root") do input
-    info("Input has $(length(input)) entries.")
+    @info "Input has $(length(input)) entries."
 
     tchain = input.tchain
     bind_branch!(tchain, "idx", idx)
@@ -23,12 +21,12 @@ open(TChainInput, "data", "out.root") do input
     @time for _ in tchain
         copy!(a, cpp_a)
         n += 1
-        @assert idx.x == n
+        @assert idx[] == n
         append!(A, a)
     end
 end
 
-info(length(A))
+@info length(A)
 
 #=
 using Plots

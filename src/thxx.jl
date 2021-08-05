@@ -91,12 +91,12 @@ const AnyTHInst = Union{AnyTH1Inst, AnyTH2Inst, AnyTH3Inst}
 export THxx, new_THxx
 
 
-init_thxx{N}(hist::AnyTHInst, edges::NTuple{N, Range}) = begin
+init_thxx(hist::AnyTHInst, edges::NTuple{N,AbstractRange}) where N = begin
     @cxx hist->SetBins(axis_spec(edges)...)
     hist
 end
 
-init_thxx{N}(hist::AnyTHInst, edges::NTuple{N, Range}, name::AbstractString, title::AbstractString) = begin
+init_thxx(hist::AnyTHInst, edges::NTuple{N, AbstractRange}, name::AbstractString, title::AbstractString) where N = begin
     init_thxx(hist, edges)
     @cxx hist->SetNameTitle(pointer(name), pointer(title))
     hist
@@ -118,44 +118,44 @@ edges(hist::AnyTH2Inst) = range(xaxis(hist)), range(yaxis(hist))
 edges(hist::AnyTH3Inst) = (range(xaxis(hist)), range(yaxis(hist)), range(zaxis(hist)))
 
 
-THxx(::Type{Int32}, edges::NTuple{1, Range}, args...) = init_thxx((@cxx TH1I()), edges, args...)
-new_THxx(::Type{Int32}, edges::NTuple{1, Range}, args...) = init_thxx(icxx""" new TH1I; """, edges, args...)
+THxx(::Type{Int32}, edges::NTuple{1, AbstractRange}, args...) = init_thxx((@cxx TH1I()), edges, args...)
+new_THxx(::Type{Int32}, edges::NTuple{1, AbstractRange}, args...) = init_thxx(icxx""" new TH1I; """, edges, args...)
 
-THxx(::Type{Float32}, edges::NTuple{1, Range}, args...) = init_thxx((@cxx TH1F()), edges, args...)
-new_THxx(::Type{Float32}, edges::NTuple{1, Range}, args...) = init_thxx(icxx""" new TH1F; """, edges, args...)
+THxx(::Type{Float32}, edges::NTuple{1, AbstractRange}, args...) = init_thxx((@cxx TH1F()), edges, args...)
+new_THxx(::Type{Float32}, edges::NTuple{1, AbstractRange}, args...) = init_thxx(icxx""" new TH1F; """, edges, args...)
 
-THxx(::Type{Float64}, edges::NTuple{1, Range}, args...) = init_thxx((@cxx TH1D()), edges, args...)
-new_THxx(::Type{Float64}, edges::NTuple{1, Range}, args...) = init_thxx(icxx""" new TH1D; """, edges, args...)
+THxx(::Type{Float64}, edges::NTuple{1, AbstractRange}, args...) = init_thxx((@cxx TH1D()), edges, args...)
+new_THxx(::Type{Float64}, edges::NTuple{1, AbstractRange}, args...) = init_thxx(icxx""" new TH1D; """, edges, args...)
 
-THxx{T}(::Type{T}, edge::Range, args...) = THxx(T, (edge,), args...)
-new_THxx{T}(::Type{T}, edge::Range, args...) = new_THxx(T, (edge,), args...)
-
-
-THxx(::Type{Int32}, edges::NTuple{2, Range}, args...) = init_thxx((@cxx TH2I()), edges, args...)
-new_THxx(::Type{Int32}, edges::NTuple{2, Range}, args...) = init_thxx(icxx""" new TH2I; """, edges, args...)
-
-THxx(::Type{Float32}, edges::NTuple{2, Range}, args...) = init_thxx((@cxx TH2F()), edges, args...)
-new_THxx(::Type{Float32}, edges::NTuple{2, Range}, args...) = init_thxx(icxx""" new TH2F; """, edges, args...)
-
-THxx(::Type{Float64}, edges::NTuple{2, Range}, args...) = init_thxx((@cxx TH2D()), edges, args...)
-new_THxx(::Type{Float64}, edges::NTuple{2, Range}, args...) = init_thxx(icxx""" new TH2D; """, edges, args...)
+THxx(::Type{T}, edge::AbstractRange, args...) where {T<:Real} = THxx(T, (edge,), args...)
+new_THxx(::Type{T}, edge::AbstractRange, args...) where {T<:Real} = new_THxx(T, (edge,), args...)
 
 
-THxx(::Type{Int32}, edges::NTuple{3, Range}, args...) = init_thxx((@cxx TH3I()), edges, args...)
-new_THxx(::Type{Int32}, edges::NTuple{3, Range}, args...) = init_thxx(icxx""" new TH3I; """, edges, args...)
+THxx(::Type{Int32}, edges::NTuple{2, AbstractRange}, args...) = init_thxx((@cxx TH2I()), edges, args...)
+new_THxx(::Type{Int32}, edges::NTuple{2, AbstractRange}, args...) = init_thxx(icxx""" new TH2I; """, edges, args...)
 
-THxx(::Type{Float32}, edges::NTuple{3, Range}, args...) = init_thxx((@cxx TH3F()), edges, args...)
-new_THxx(::Type{Float32}, edges::NTuple{3, Range}, args...) = init_thxx(icxx""" new TH3F; """, edges, args...)
+THxx(::Type{Float32}, edges::NTuple{2, AbstractRange}, args...) = init_thxx((@cxx TH2F()), edges, args...)
+new_THxx(::Type{Float32}, edges::NTuple{2, AbstractRange}, args...) = init_thxx(icxx""" new TH2F; """, edges, args...)
 
-THxx(::Type{Float64}, edges::NTuple{3, Range}, args...) = init_thxx((@cxx TH3D()), edges, args...)
-new_THxx(::Type{Float64}, edges::NTuple{3, Range}, args...) = init_thxx(icxx""" new TH3D; """, edges, args...)
+THxx(::Type{Float64}, edges::NTuple{2, AbstractRange}, args...) = init_thxx((@cxx TH2D()), edges, args...)
+new_THxx(::Type{Float64}, edges::NTuple{2, AbstractRange}, args...) = init_thxx(icxx""" new TH2D; """, edges, args...)
 
 
-THxx{N}(edges::NTuple{N, Range}, args...) = THxx(Float64, edges, args...)
-new_THxx{N}(edges::NTuple{N, Range}, args...) = new_THxx(Float64, edges, args...)
+THxx(::Type{Int32}, edges::NTuple{3, AbstractRange}, args...) = init_thxx((@cxx TH3I()), edges, args...)
+new_THxx(::Type{Int32}, edges::NTuple{3, AbstractRange}, args...) = init_thxx(icxx""" new TH3I; """, edges, args...)
 
-THxx(edge::Range, args...) = THxx(Float64, (edge, ), args...)
-new_THxx(edge::Range, args...) = new_THxx(Float64, (edge, ), args...)
+THxx(::Type{Float32}, edges::NTuple{3, AbstractRange}, args...) = init_thxx((@cxx TH3F()), edges, args...)
+new_THxx(::Type{Float32}, edges::NTuple{3, AbstractRange}, args...) = init_thxx(icxx""" new TH3F; """, edges, args...)
+
+THxx(::Type{Float64}, edges::NTuple{3, AbstractRange}, args...) = init_thxx((@cxx TH3D()), edges, args...)
+new_THxx(::Type{Float64}, edges::NTuple{3, AbstractRange}, args...) = init_thxx(icxx""" new TH3D; """, edges, args...)
+
+
+THxx(edges::NTuple{N, AbstractRange}, args...) where N = THxx(Float64, edges, args...)
+new_THxx(edges::NTuple{N, AbstractRange}, args...) where N = new_THxx(Float64, edges, args...)
+
+THxx(edge::AbstractRange, args...) = THxx(Float64, (edge, ), args...)
+new_THxx(edge::AbstractRange, args...) = new_THxx(Float64, (edge, ), args...)
 
 
 show(io::IO, hist::AnyTH) = begin
@@ -167,10 +167,10 @@ getname(obj::AnyTHInst) = unsafe_string(@cxx obj->GetName())
 
 gettitle(obj::AnyTHInst) = unsafe_string(@cxx obj->GetTitle())
 
-push!{T <: Union{Integer, AbstractFloat}}(hist::AnyTH1Inst, x::T) = @cxx hist->Fill(x)
-push!{T <: Union{Integer, AbstractFloat}}(hist::AnyTH1Inst, x::NTuple{1, T}) = @cxx hist->Fill(x[1])
-push!{T <: Union{Integer, AbstractFloat}}(hist::AnyTH2Inst, x::NTuple{2, T}) = @cxx hist->Fill(x[1], x[2])
-push!{T <: Union{Integer, AbstractFloat}}(hist::AnyTH3Inst, x::NTuple{3, T}) = @cxx hist->Fill(x[1], x[2], x[3])
+push!(hist::AnyTH1Inst, x::T) where {T <: Union{Integer, AbstractFloat}} = @cxx hist->Fill(x)
+push!(hist::AnyTH1Inst, x::NTuple{1, T}) where {T <: Union{Integer, AbstractFloat}} = @cxx hist->Fill(x[1])
+push!(hist::AnyTH2Inst, x::NTuple{2, T}) where {T <: Union{Integer, AbstractFloat}} = @cxx hist->Fill(x[1], x[2])
+push!(hist::AnyTH3Inst, x::NTuple{3, T}) where {T <: Union{Integer, AbstractFloat}} = @cxx hist->Fill(x[1], x[2], x[3])
 
 draw(hist::AnyTHInst) = @cxx hist->Draw()
 draw(hist::AnyTHInst, option) = @cxx hist->Draw(pointer(option))

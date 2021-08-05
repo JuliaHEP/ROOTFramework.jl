@@ -1,22 +1,21 @@
 # This file is a part of ROOTFramework.jl, licensed under the MIT License (MIT).
 
-using Cxx
-
+cxxinclude("TSystem.h")
 cxxinclude("TApplication.h")
 
 export rootgui
 
 
-immutable ROOT_GUI
+struct ROOT_GUI
     root_app
     root_timer
     julia_timer
 end
 
-_global_root_gui = Nullable{ROOT_GUI}()
+_global_root_gui = nothing
 
 
-ROOT_GUI() = begin
+function ROOT_GUI()
     root_app = icxx"""
         TApplication *app = new TApplication("", 0, 0);
         app->SetReturnFromRun(true);
@@ -30,20 +29,23 @@ ROOT_GUI() = begin
         timer;
     """
 
-    julia_timer = Timer(timer::Timer -> root_gui_cycle(), 0, 0.1)
+    julia_timer = Timer(timer::Timer -> root_gui_cycle(), 0, interval=0.1)
     
     ROOT_GUI(root_app, root_timer, julia_timer)
 end
 
 
-rootgui() = if isnull(_global_root_gui)
-    global _global_root_gui = Nullable(ROOT_GUI())
+rootgui() = if isnothing(_global_root_gui)
+    global _global_root_gui = ROOT_GUI()
     nothing
 end
 
 
-root_gui_cycle() = icxx"""
-    // gApplication->StartIdleing();
-    gSystem->InnerLoop();
-    // gApplication->StopIdleing();
-"""
+function root_gui_cycle()
+    rootgui()
+    icxx"""
+        // gApplication->StartIdleing();
+        gSystem->InnerLoop();
+        // gApplication->StopIdleing();
+    """
+end

@@ -30,15 +30,25 @@ create_ttree!(tdir::ATDirectoryInst, name::AbstractString, title::AbstractString
 
 Base.size(ttree::ATTreeInst) = (length(ttree),)
 Base.length(ttree::ATTreeInst) = Int(@cxx ttree->GetEntries())
+Base.firstindex(ttree::ATTreeInst) = 1
+Base.lastindex(ttree::ATTreeInst) = length(ttree)
 
 Base.getindex(ttree::ATTreeInst, i::Integer) = begin
     @cxx ttree->GetEntry(i - 1)
     nothing
 end
 
-Base.start(ttree::ATTreeInst) = 1
-Base.next(ttree::ATTreeInst, i::Integer) = ( getindex(ttree, i), i+1 )
-Base.done(ttree::ATTreeInst, i::Integer) = i > length(ttree)
+
+Base.iterate(ttree::ATTreeInst) = iterate(ttree, firstindex(ttree))
+
+function Base.iterate(ttree::ATTreeInst, i::Integer)
+    if i <= lastindex(ttree)
+        ( getindex(ttree, i), i+1 )
+    else
+        nothing
+    end
+end
+
 
 Base.push!(ttree::TTreePtr) = icxx""" $ttree->Fill(); """
 
@@ -46,7 +56,7 @@ getname(obj::ATTreeInst) = unsafe_string(@cxx obj->GetName())
 gettitle(obj::ATTreeInst) = unsafe_string(@cxx obj->GetTitle())
 
 
-bind_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::ATTreeInst, name::AbstractString, value::Ref{T}) = begin
+bind_branch!(ttree::ATTreeInst, name::AbstractString, value::Ref{T}) where {T<:Union{Number, CppPtr}} = begin
     ttree_obj = auto_deref(ttree)
     icxx"""
         $ttree_obj.SetBranchStatus($name, true);
@@ -78,8 +88,8 @@ bind_branch!(ttree::ATTreeInst, name::AbstractString, value::Ref{UInt64}) = begi
 end
 
 
-create_branch!{T<:Union{Number, Cxx.CppPtr}}(ttree::TTreePtr, name::AbstractString, value::Ref{T}; bufsize::Integer = 32000, splitlevel::Integer = 99) =
+create_branch!(ttree::TTreePtr, name::AbstractString, value::Ref{T}; bufsize::Integer = 32000, splitlevel::Integer = 99) where {T<:Union{Number, CppPtr}} =
     icxx""" $ttree->Branch($name, &$value, $(Int32(bufsize)), $(Int32(splitlevel))); """
 
-create_branch!(ttree::TTreePtr, name::AbstractString, value::Cxx.CppValue; bufsize::Integer = 32000, splitlevel::Integer = 99) =
+create_branch!(ttree::TTreePtr, name::AbstractString, value::CppValue; bufsize::Integer = 32000, splitlevel::Integer = 99) =
     icxx""" $ttree->Branch($name, &$value, $(Int32(bufsize)), $(Int32(splitlevel))); """

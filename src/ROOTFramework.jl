@@ -4,7 +4,14 @@ __precompile__(false)
 
 module ROOTFramework
 
+using Cxx
 using ROOT
+
+using Cxx.CxxCore: CppValue, CppPtr, CppRef, CxxBuiltinTs
+
+macro rcpp_str(s,args...)
+    CppRef{Cxx.CxxCore.simpleCppType(s),Cxx.CxxCore.NullCVR}
+end
 
 include("pointers.jl")
 include("tstring.jl")

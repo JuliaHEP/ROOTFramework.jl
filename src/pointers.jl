@@ -1,23 +1,19 @@
 # This file is a part of ROOTFramework.jl, licensed under the MIT License (MIT).
 
-using Cxx
-
-import Base: pointer
-
-pointer_to(x::Union{Cxx.CppValue, Cxx.CppRef}) =
+pointer_to(x::Union{CppValue, CppRef}) =
     icxx""" &$x; """
 
-as_pointer(x::Cxx.CppPtr) = x
-as_pointer(x::Union{Cxx.CppValue, Cxx.CppRef}) = pointer_to(x)
+as_pointer(x::CppPtr) = x
+as_pointer(x::Union{CppValue, CppRef}) = pointer_to(x)
 
-isnullptr(ptr::Cxx.CppPtr) = Ptr{Void}(ptr) == Ptr{Void}(0)
+isnullptr(ptr::CppPtr) = Ptr{Void}(ptr) == Ptr{Void}(0)
 
-delete_if_not_nullptr(ptr::Cxx.CppPtr) = begin
+delete_if_not_nullptr(ptr::CppPtr) = begin
     if ! isnullptr(ptr)
         icxx""" delete $ptr; """
     end
 end
 
-auto_deref(v::Cxx.CppPtr) = icxx"*$(v);"::Cxx.CppRef
-auto_deref(v::Cxx.CppValue) = v
-auto_deref(v::Cxx.CppRef) = v
+auto_deref(v::CppPtr) = icxx"*$(v);"::CppRef
+auto_deref(v::CppValue) = v
+auto_deref(v::CppRef) = v

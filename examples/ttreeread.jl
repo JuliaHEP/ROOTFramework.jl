@@ -8,17 +8,17 @@ a = bindings[:a] = Float64[]
 A = Float64[]
 
 open(TChainInput, bindings, "data", "out.root") do input
-    info("Input has $(length(input)) entries.")
+    @info "Input has $(length(input)) entries."
 
     n = 0
     @time for _ in input
         n += 1
-        @assert idx.x == n
+        @assert idx[] == n
         append!(A, a)
     end
 end
 
-info(length(A))
+@info length(A)
 
 #=
 using Plots

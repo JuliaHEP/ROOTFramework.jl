@@ -10,4 +10,8 @@ import Base: show
 const TFitResultPtr = cxxt"TFitResultPtr"
 
 
-show(io::IO, x::TFitResultPtr) = print(io, "TFitResultPtr($(convert(UInt, (@cxx x->Get()).ptr)))")
+function show(io::IO, x::TFitResultPtr)
+    print(io, "TFitResultPtr(")
+    show(io, reinterpret(Culong, @cxx x->Get()))
+    print(io, ")")
+end

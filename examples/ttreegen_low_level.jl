@@ -13,8 +13,8 @@ create_branch!(ttree, "s", s)
 create_branch!(ttree, "a", cpp_a)
 
 @time for entry in 1:1000000
-    idx.x = entry
-    s.x = 2.0 + 2.0 * randn()
+    idx[] = entry
+    s[] = 2.0 + 2.0 * randn()
 
     a[1] = 12.0 + 2.0 * randn()
     a[2] = 22.0 + 2.0 * randn()
