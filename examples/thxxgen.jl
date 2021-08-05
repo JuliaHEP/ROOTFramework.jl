@@ -1,4 +1,4 @@
-using ROOTFramework, Cxx
+using ROOTFramework, ROOT, Cxx
 import JSON
 
 # Init GUI, open output file and create canvas

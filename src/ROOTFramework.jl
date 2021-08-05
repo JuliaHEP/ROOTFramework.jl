@@ -16,7 +16,6 @@ end
 include("pointers.jl")
 include("tstring.jl")
 include("tobject.jl")
-include("gui.jl")
 include("tcanvas.jl")
 include("tbrowser.jl")
 include("tcolor.jl")
